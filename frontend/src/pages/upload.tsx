@@ -5,8 +5,9 @@ import { Upload, CheckCircle, AlertCircle, ArrowLeft, FileText } from "lucide-re
 import toast from "react-hot-toast";
 
 const API_URL =
-  process.env.NEXT_PUBLIC_API_URL ||
-  "https://rag-based-medical-question-answering.onrender.com";
+  typeof window !== "undefined"
+    ? ""   // browser uses relative URLs → goes through Next.js proxy (no CORS)
+    : "https://rag-based-medical-question-answering.onrender.com";
 
 export default function UploadPage() {
   const router = useRouter();
