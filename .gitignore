@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+*.db
+*.sqlite3
+logs/
+
+# Node
+node_modules/
+.next/
+.env.local
+out/
+dist/
+
+# Data
+data/uploaded_documents/medical_pdfs/*
+data/uploaded_documents/treatment_guidelines/*
+data/uploaded_documents/drug_databases/*
+data/uploaded_documents/research_articles/*
+data/uploaded_documents/medical_books/*
+data/uploaded_documents/clinical_protocols/*
+data/uploaded_documents/rejected/*
+data/embeddings/vector_store/chroma_db/*
+data/metadata/*
+!data/**/.gitkeep
+
+# Docker
+*.log
+
+# OS
+.DS_Store
+Thumbs.db

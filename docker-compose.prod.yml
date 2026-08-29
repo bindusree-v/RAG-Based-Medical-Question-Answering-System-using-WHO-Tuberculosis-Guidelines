@@ -1,0 +1,83 @@
+version: "3.9"
+
+# Production overrides — use with:
+# docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  backend:
+    environment:
+      - DEBUG=false
+      - ENVIRONMENT=production
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: always
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+
+  frontend:
+    restart: always
+    environment:
+      - NEXT_PUBLIC_API_URL=https://${DOMAIN}
+
+  nginx:
+    restart: always
+    volumes:
+      - ./nginx/nginx.prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/certs:/etc/nginx/certs:ro
+    ports:
+      - "80:80"
+      - "443:443"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: medirag_postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-medirag}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-changeme}
+      POSTGRES_DB: ${POSTGRES_DB:-medirag}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-medirag}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: always
+
+  # Prometheus metrics scraping
+  prometheus:
+    image: prom/prometheus:v2.51.0
+    container_name: medirag_prometheus
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus_data:/prometheus
+    ports:
+      - "9090:9090"
+    restart: unless-stopped
+
+  # Grafana dashboards
+  grafana:
+    image: grafana/grafana:10.4.0
+    container_name: medirag_grafana
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana_data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards:ro
+    ports:
+      - "3001:3000"
+    depends_on:
+      - prometheus
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: medirag_postgres_data
+  prometheus_data:
+    name: medirag_prometheus_data
+  grafana_data:
+    name: medirag_grafana_data

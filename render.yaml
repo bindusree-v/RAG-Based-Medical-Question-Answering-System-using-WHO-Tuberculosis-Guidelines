@@ -1,0 +1,63 @@
+services:
+  - type: web
+    name: medirag-backend
+    runtime: docker
+    # Render looks for Dockerfile relative to this file; adjust context to the backend folder.
+    dockerfilePath: ./backend/Dockerfile
+    dockerContext: ./backend
+    # Render injects PORT automatically; uvicorn reads it via the CMD in Dockerfile.
+    envVars:
+      - key: PORT
+        value: 8000
+      - key: ENVIRONMENT
+        value: production
+      - key: DEBUG
+        value: "false"
+
+      # --- Security (set real values in Render dashboard, not here) ---
+      - key: SECRET_KEY
+        sync: false   # marks as secret; fill in Render dashboard
+
+      # --- Database ---
+      # Default SQLite works out of the box on Render's ephemeral disk.
+      # For persistence across deploys add a Render PostgreSQL service and
+      # set DATABASE_URL to:  postgresql+asyncpg://user:pass@host:5432/medirag
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:///./medirag.db
+
+      # --- Ollama / LLM ---
+      # Ollama cannot run on Render Free tier. Point to an external Ollama
+      # instance or a hosted LLM proxy (e.g. Ollama Cloud, local tunnel).
+      - key: OLLAMA_BASE_URL
+        sync: false   # set in Render dashboard
+      - key: LLM_MODEL
+        value: llama3
+
+      # --- Embeddings ---
+      - key: EMBEDDING_MODEL
+        value: BAAI/bge-small-en-v1.5
+      - key: EMBEDDING_DEVICE
+        value: cpu
+
+      # --- Vector Store ---
+      - key: VECTOR_STORE_TYPE
+        value: chroma
+      - key: CHROMA_PERSIST_DIRECTORY
+        value: /data/embeddings/vector_store/chroma_db
+
+      # --- Document Storage ---
+      - key: UPLOAD_BASE_DIR
+        value: /data/uploaded_documents
+      - key: METADATA_DIR
+        value: /data/metadata
+      - key: MAX_FILE_SIZE_MB
+        value: "50"
+
+      # --- CORS ---
+      - key: ALLOWED_ORIGINS
+        value: https://rag-based-medical-question-answerin.vercel.app,http://localhost:3000
+
+    disk:
+      name: medirag-data
+      mountPath: /data
+      sizeGB: 1
