@@ -25,7 +25,7 @@ services:
       - key: GROQ_API_KEY
         sync: false   # set in Render dashboard
       - key: LLM_MODEL
-        value: llama3-8b-8192
+        value: openai/gpt-oss-20b
 
       # --- Embeddings ---
       - key: EMBEDDING_MODEL
