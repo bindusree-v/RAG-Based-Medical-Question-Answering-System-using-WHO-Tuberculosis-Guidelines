@@ -42,9 +42,12 @@ class Settings(BaseSettings):
 
     # Ollama / LLM
     ollama_base_url: str = Field(default="http://localhost:11434", alias="OLLAMA_BASE_URL")
-    llm_model: str = Field(default="llama3", alias="LLM_MODEL")
+    llm_model: str = Field(default="llama3-8b-8192", alias="LLM_MODEL")
     llm_temperature: float = Field(default=0.1, alias="LLM_TEMPERATURE")
     llm_max_tokens: int = Field(default=2048, alias="LLM_MAX_TOKENS")
+
+    # Groq
+    groq_api_key: str = Field(default="", alias="GROQ_API_KEY")
 
     # Embeddings
     embedding_model: str = Field(default="BAAI/bge-small-en-v1.5", alias="EMBEDDING_MODEL")

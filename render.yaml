@@ -21,11 +21,11 @@ services:
       - key: DATABASE_URL
         value: sqlite+aiosqlite:///./medirag.db
 
-      # --- Ollama / LLM ---
-      - key: OLLAMA_BASE_URL
+      # --- Groq LLM (replaces Ollama — free at console.groq.com) ---
+      - key: GROQ_API_KEY
         sync: false   # set in Render dashboard
       - key: LLM_MODEL
-        value: llama3
+        value: llama3-8b-8192
 
       # --- Embeddings ---
       - key: EMBEDDING_MODEL

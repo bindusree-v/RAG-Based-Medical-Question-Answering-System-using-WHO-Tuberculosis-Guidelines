@@ -8,7 +8,7 @@ Pipeline:
 import time
 from typing import Dict, List, Optional, Any
 
-from langchain_community.llms import Ollama
+from langchain_groq import ChatGroq
 from langchain_core.prompts import PromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 
@@ -184,19 +184,19 @@ class RAGPipeline:
     """
 
     def __init__(self):
-        self._llm: Optional[Ollama] = None
+        self._llm: Optional[ChatGroq] = None
         self._vsm = get_vector_store_manager()
 
-    def _get_llm(self) -> Ollama:
-        """Lazy-load Ollama LLM."""
+    def _get_llm(self) -> ChatGroq:
+        """Lazy-load Groq LLM."""
         if self._llm is None:
-            self._llm = Ollama(
-                base_url=settings.ollama_base_url,
+            self._llm = ChatGroq(
+                api_key=settings.groq_api_key,
                 model=settings.llm_model,
                 temperature=settings.llm_temperature,
-                num_predict=settings.llm_max_tokens,
+                max_tokens=settings.llm_max_tokens,
             )
-            logger.info(f"Ollama LLM loaded: model={settings.llm_model}")
+            logger.info(f"Groq LLM loaded: model={settings.llm_model}")
         return self._llm
 
     def _retrieve_context(
