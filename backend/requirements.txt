@@ -15,8 +15,8 @@ langchain-ollama==0.1.1
 
 # Embeddings
 sentence-transformers==2.7.0
-# CPU-only torch wheel — avoids the ~2 GB CUDA variant that breaks Render builds
-torch==2.3.0+cpu --extra-index-url https://download.pytorch.org/whl/cpu
+# CPU-only torch — index header at top of file points pip at the right wheel
+torch==2.3.0
 transformers==4.41.0
 
 # Vector Stores
