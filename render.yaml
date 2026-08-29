@@ -2,9 +2,8 @@ services:
   - type: web
     name: medirag-backend
     runtime: docker
-    # Render looks for Dockerfile relative to this file; adjust context to the backend folder.
-    dockerfilePath: ./backend/Dockerfile
-    dockerContext: ./backend
+    rootDir: backend
+    dockerfilePath: ./Dockerfile
     # Render injects PORT automatically; uvicorn reads it via the CMD in Dockerfile.
     envVars:
       - key: PORT
@@ -19,15 +18,10 @@ services:
         sync: false   # marks as secret; fill in Render dashboard
 
       # --- Database ---
-      # Default SQLite works out of the box on Render's ephemeral disk.
-      # For persistence across deploys add a Render PostgreSQL service and
-      # set DATABASE_URL to:  postgresql+asyncpg://user:pass@host:5432/medirag
       - key: DATABASE_URL
         value: sqlite+aiosqlite:///./medirag.db
 
       # --- Ollama / LLM ---
-      # Ollama cannot run on Render Free tier. Point to an external Ollama
-      # instance or a hosted LLM proxy (e.g. Ollama Cloud, local tunnel).
       - key: OLLAMA_BASE_URL
         sync: false   # set in Render dashboard
       - key: LLM_MODEL
