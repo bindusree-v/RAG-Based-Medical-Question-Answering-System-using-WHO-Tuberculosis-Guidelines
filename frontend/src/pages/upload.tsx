@@ -4,7 +4,9 @@ import Head from "next/head";
 import { Upload, CheckCircle, AlertCircle, ArrowLeft, FileText } from "lucide-react";
 import toast from "react-hot-toast";
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
+const API_URL =
+  process.env.NEXT_PUBLIC_API_URL ||
+  "https://rag-based-medical-question-answering.onrender.com";
 
 export default function UploadPage() {
   const router = useRouter();
